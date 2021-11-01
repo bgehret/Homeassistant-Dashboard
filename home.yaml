@@ -1,0 +1,2567 @@
+background: var(--background-image)
+kiosk_mode:
+  mobile_settings:
+    hide_header: true
+  non_admin_settings:
+    hide_header: true
+    ignore_entity_settings: true
+    ignore_mobile_settings: true
+  entity_settings:
+    - entity:
+        input_boolean.show_header: 'on'
+      hide_header: false
+button_card_templates:
+  animated_btn_states:
+    state:
+      - spin: true
+        styles:
+          card:
+            - background-color: white
+            - filter: opacity(95%)
+          custom_fields:
+            s2:
+              - color: var(--secondary-text-color)
+          label:
+            - color: var(--secondary-text-color)
+            - font-size: 11pt
+          name:
+            - color: '#171717'
+          state:
+            - color: var(--secondary-text-color)
+        value: 'on'
+        id: animated_on
+      - spin: true
+        styles:
+          card: null
+          custom_fields:
+            s2:
+              - color: var(--secondary-text-color)
+          icon: null
+          label: null
+          name: null
+          state:
+            - color: var(--secondary-text-color)
+        value: 'off'
+        id: animated_off
+  quick_toggle_btn:
+    styles:
+      card:
+        - border-radius: 10%
+        - filter: opacity(50%)
+    aspect_ratio: 1/1
+    show_name: false
+    hold_action:
+      action: more-info
+    double_tap_action:
+      action: more-info
+    state:
+      - id: id_off
+        styles:
+          card: null
+          icon: null
+          label: null
+          name: null
+          state:
+            - color: var(--secondary-text-color)
+        value: 'off'
+      - id: id_on
+        styles:
+          card:
+            - background-color: '#0DD58C'
+            - filter: opacity(95%)
+          icon:
+            - color: white
+          label:
+            - color: white
+          name:
+            - color: white
+          state:
+            - color: white
+        value: 'on'
+      - id: id_unavailable
+        styles:
+          card:
+            - background-color: red
+            - filter: opacity(95%)
+          icon:
+            - color: white
+          label:
+            - color: white
+          name:
+            - color: white
+          state:
+            - color: white
+        value: unavailable
+      - id: id_closed
+        styles:
+          card: null
+          icon:
+            - color: var(--paper-item-icon-color)
+          label: null
+          name: null
+          state:
+            - color: var(--secondary-text-color)
+        value: closed
+      - id: id_open
+        styles:
+          card:
+            - background-color: '#0DD58C'
+            - filter: opacity(95%
+          icon:
+            - color: white
+          label:
+            - color: white
+          name:
+            - color: white
+          state:
+            - color: white
+        operator: template
+        value: >
+          [[[ return entity.state === 'open' || entity.state === 'opening' ||
+          entity.state === 'closing' ]]]
+  standard_btn_layout:
+    show_state: true
+    show_label: true
+    aspect_ratio: 1/1
+    size: 70%
+    tap_action:
+      action: toggle
+      haptic: medium
+    hold_action:
+      action: more-info
+      haptic: heavy
+    double_tap_action:
+      action: more-info
+      haptic: heavy
+    styles:
+      card:
+        - border-radius: 10%
+        - filter: opacity(50%)
+      custom_fields:
+        s2:
+          - justify-self: start
+          - margin-left: 8%
+          - padding-bottom: 5%
+          - font-size: 10pt
+      grid:
+        - grid-template-areas: '"i l" "n n" "s s" "s2 s2"'
+        - grid-template-columns: 1fr 1fr
+        - grid-template-rows: 1fr auto auto auto
+      icon: null
+      label:
+        - justify-self: start
+        - font-size: 11pt
+      name:
+        - justify-self: start
+        - margin-left: 8%
+        - font-weight: bold
+        - font-size: 12pt
+      state:
+        - justify-self: start
+        - margin-left: 8%
+        - font-size: 10pt
+  standard_btn_states:
+    state:
+      - styles:
+          card:
+            - background-color: red
+          custom_fields:
+            s2:
+              - color: white
+          icon:
+            - color: white
+          label:
+            - color: white
+          name:
+            - color: white
+          state:
+            - color: white
+        value: unavailable
+      - styles:
+          card: null
+          custom_fields:
+            s2:
+              - color: var(--secondary-text-color)
+          icon: null
+          label: null
+          name: null
+          state:
+            - color: var(--secondary-text-color)
+        value: 'off'
+        id: state_off
+  standard_btn_states_on:
+    state:
+      - styles:
+          card:
+            - background-color: white
+            - filter: opacity(95%)
+          custom_fields:
+            s2:
+              - color: var(--secondary-text-color)
+          label:
+            - color: var(--secondary-text-color)
+            - font-size: 11pt
+          name:
+            - color: '#171717'
+          state:
+            - color: var(--secondary-text-color)
+        value: 'on'
+        id: state_on
+  switch_btn:
+    double_tap_action:
+      action: more-info
+    show_state: true
+    tap_action:
+      action: toggle
+  light_btn:
+    double_tap_action:
+      action: more-info
+    show_label: true
+    show_state: true
+    state_display: |
+      [[[ 
+        var bri = entity.attributes.brightness;
+        var brirnd = Math.round(entity.attributes.brightness / 2.55);
+        if (entity.state == "on" && bri == undefined) return "Lights are on";
+        if (entity.state == "on" && bri !== undefined) return "Lights on at " + brirnd + "%";
+        if (entity.state == "Unavailable") return "Lights are Unavailable";
+        else return "Lights are off"
+      ]]]
+    tap_action:
+      action: toggle
+popup_cards:
+  input_boolean.washer:
+    title: Washer
+    card:
+      type: entities
+      entities:
+        - type: conditional
+          conditions:
+            - entity: switch.washer_plug
+              state_not: 'on'
+          row:
+            entity: switch.washer_plug
+        - entity: sensor.washer_current
+        - entity: sensor.washer_power
+        - entity: sensor.washer_voltage
+        - entity: sensor.washer_on_time
+          name: Elapsed Time
+  input_boolean.dryer:
+    title: Dryer
+    card:
+      type: entities
+      entities:
+        - type: conditional
+          conditions:
+            - entity: switch.dryer_plug
+              state_not: 'on'
+          row:
+            entity: switch.dryer_plug
+        - entity: sensor.dryer_current
+        - entity: sensor.dryer_power
+        - entity: sensor.dryer_voltage
+        - entity: sensor.dryer_on_time
+          name: Elapsed Time
+  light.basement_lights:
+    title: Basement
+    card:
+      type: custom:vertical-stack-in-card
+      style:
+        border: true
+      cards:
+        - type: entities
+          entities:
+            - type: buttons
+              entities:
+                - entity: light.basement_lights
+                  name: Lights
+                  tap_action:
+                    action: call-service
+                    service: light.toggle
+                    service_data:
+                      entity_id: light.basement_lights
+            - type: divider
+        - type: custom:vertical-stack-in-card
+          horizontal: true
+          title: Laundry
+          style:
+            border: true
+            font_size: 24px
+            cards:
+              - null
+          cards:
+            - type: custom:button-card
+              entity: input_boolean.washer
+              icon: mdi:washing-machine
+              scale: 20px
+              show_name: true
+              show_state: true
+              name: Time Elapsed
+              state_display: |
+                [[[return states['sensor.washer_on_time'].state]]]
+              tap_action:
+                action: more-info
+              styles:
+                name:
+                  - font-size: 10pt
+                grid:
+                  - grid-template-areas: '"i" "s" "n"'
+                  - grid-template-columns: 1fr
+                  - grid-template-rows: auto auto
+            - type: custom:button-card
+              entity: input_boolean.dryer
+              icon: mdi:tumble-dryer
+              scale: 20px
+              show_name: true
+              show_state: true
+              name: Time Elapsed
+              state_display: |
+                [[[return states['sensor.dryer_on_time'].state]]]
+              tap_action:
+                action: more-info
+              styles:
+                name:
+                  - font-size: 10pt
+                grid:
+                  - grid-template-areas: '"i" "s" "n"'
+                  - grid-template-columns: 1fr
+                  - grid-template-rows: auto auto
+  light.stair_lights:
+    title: Stairs
+    card:
+      type: entities
+      entities:
+        - entity: light.stair_lights
+          name: Switch
+          state_color: true
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - type: conditional
+          conditions:
+            - entity: light.stair_light_bulb
+              state_not: unavailable
+          row:
+            type: custom:slider-entity-row
+            entity: light.stair_light_bulb
+            name: Bulb
+            hide_state: true
+            step: 1
+            min: 1
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+  binary_sensor.vacuums:
+    title: Vacuums
+    card:
+      type: entities
+      entities:
+        - entity: vacuum.susan
+          type: custom:multiple-entity-row
+          show_state: false
+          secondary_info:
+            attribute: battery_level
+            unit: '%'
+            name: 'Battery:'
+          entities:
+            - attribute: status
+              name: Status
+        - type: custom:paper-buttons-row
+          buttons:
+            - icon: mdi:play
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.start
+                service_data:
+                  entity_id: vacuum.susan
+            - icon: mdi:pause
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.pause
+                service_data:
+                  entity_id: vacuum.susan
+            - icon: mdi:bullseye
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.clean_spot
+                service_data:
+                  entity_id: vacuum.susan
+            - icon: mdi:map-marker-question
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.locate
+                service_data:
+                  entity_id: vacuum.susan
+            - icon: mdi:home
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.return_to_base
+                service_data:
+                  entity_id: vacuum.susan
+        - type: divider
+        - entity: vacuum.janet
+          type: custom:multiple-entity-row
+          show_state: false
+          secondary_info:
+            attribute: battery_level
+            unit: '%'
+            name: 'Battery:'
+          entities:
+            - attribute: status
+              name: Status
+        - type: custom:paper-buttons-row
+          buttons:
+            - icon: mdi:play
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.start
+                service_data:
+                  entity_id: vacuum.janet
+            - icon: mdi:pause
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.pause
+                service_data:
+                  entity_id: vacuum.janet
+            - icon: mdi:bullseye
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.clean_spot
+                service_data:
+                  entity_id: vacuum.janet
+            - icon: mdi:map-marker-question
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.locate
+                service_data:
+                  entity_id: vacuum.janet
+            - icon: mdi:home
+              state_color: true
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: vacuum.return_to_base
+                service_data:
+                  entity_id: vacuum.janet
+        - type: conditional
+          conditions:
+            - entity: vacuum.bad_janet
+              state_not: unavailable
+          row:
+            type: divider
+        - type: conditional
+          conditions:
+            - entity: vacuum.bad_janet
+              state_not: unavailable
+          row:
+            entity: vacuum.bad_janet
+            type: custom:multiple-entity-row
+            show_state: false
+            secondary_info:
+              attribute: battery_level
+              unit: '%'
+              name: 'Battery:'
+            entities:
+              - attribute: status
+                name: Status
+        - type: conditional
+          conditions:
+            - entity: vacuum.bad_janet
+              state_not: unavailable
+          row:
+            type: custom:paper-buttons-row
+            buttons:
+              - icon: mdi:play
+                state_color: true
+                tap_action:
+                  haptic: medium
+                  action: call-service
+                  service: vacuum.start
+                  service_data:
+                    entity_id: vacuum.bad_janet
+              - icon: mdi:pause
+                state_color: true
+                tap_action:
+                  haptic: medium
+                  action: call-service
+                  service: vacuum.pause
+                  service_data:
+                    entity_id: vacuum.bad_janet
+              - icon: mdi:bullseye
+                state_color: true
+                tap_action:
+                  haptic: medium
+                  action: call-service
+                  service: vacuum.clean_spot
+                  service_data:
+                    entity_id: vacuum.bad_janet
+              - icon: mdi:map-marker-question
+                state_color: true
+                tap_action:
+                  haptic: medium
+                  action: call-service
+                  service: vacuum.locate
+                  service_data:
+                    entity_id: vacuum.bad_janet
+              - icon: mdi:home
+                state_color: true
+                tap_action:
+                  haptic: medium
+                  action: call-service
+                  service: vacuum.return_to_base
+                  service_data: null
+                  entity_id: vacuum.bad_janet
+  light.nursery_lights:
+    title: Nursery
+    card:
+      type: entities
+      entities:
+        - type: custom:multiple-entity-row
+          entity: light.nursery_lights
+          name: All Lights
+          show_state: false
+          tap_action:
+            action: toggle
+          entities:
+            - entity: sensor.nursery_temperature
+              name: Temp
+        - type: divider
+        - type: custom:slider-entity-row
+          entity: light.nursery_dimmer
+          name: Wall Light
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            haptic: medium
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.nursery_dimmer
+        - type: custom:slider-entity-row
+          entity: light.nursery_lamp
+          name: Lamp
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            haptic: medium
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.nursery_lamp
+        - type: custom:rgb-light-card
+          entity: light.nursery_lamp
+          justify: center
+          colors:
+            - rgb_color:
+                - 255
+                - 255
+                - 255
+            - rgb_color:
+                - 255
+                - 0
+                - 0
+            - rgb_color:
+                - 0
+                - 255
+                - 0
+            - rgb_color:
+                - 0
+                - 0
+                - 255
+            - rgb_color:
+                - 0
+                - 255
+                - 255
+            - rgb_color:
+                - 255
+                - 0
+                - 255
+            - effect: Scenario 4
+              icon_color: >-
+                center no-repeat
+                url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20version%3D%221.1%22%20id%3D%22mdi-party-popper%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M14.53%201.45L13.45%202.53L15.05%204.13C15.27%204.38%2015.38%204.67%2015.38%205S15.27%205.64%2015.05%205.86L11.5%209.47L12.5%2010.55L16.13%206.94C16.66%206.35%2016.92%205.7%2016.92%205C16.92%204.3%2016.66%203.64%2016.13%203.05L14.53%201.45M10.55%203.47L9.47%204.55L10.08%205.11C10.3%205.33%2010.41%205.63%2010.41%206S10.3%206.67%2010.08%206.89L9.47%207.45L10.55%208.53L11.11%207.92C11.64%207.33%2011.91%206.69%2011.91%206C11.91%205.28%2011.64%204.63%2011.11%204.03L10.55%203.47M21%205.06C20.31%205.06%2019.67%205.33%2019.08%205.86L13.45%2011.5L14.53%2012.5L20.11%206.94C20.36%206.69%2020.66%206.56%2021%206.56S21.64%206.69%2021.89%206.94L22.5%207.55L23.53%206.47L22.97%205.86C22.38%205.33%2021.72%205.06%2021%205.06M7%208L2%2022L16%2017L7%208M19%2011.06C18.3%2011.06%2017.66%2011.33%2017.06%2011.86L15.47%2013.45L16.55%2014.53L18.14%2012.94C18.39%2012.69%2018.67%2012.56%2019%2012.56C19.33%2012.56%2019.63%2012.69%2019.88%2012.94L21.5%2014.53L22.55%2013.5L20.95%2011.86C20.36%2011.33%2019.7%2011.06%2019%2011.06Z%22%20%2F%3E%3C%2Fsvg%3E"),
+                #4B00CE
+        - type: section
+          label: Left Curtain
+        - type: custom:paper-buttons-row
+          buttons:
+            - entity: cover.nursery_curtain_left
+              name: false
+              icon: mdi:curtains-closed
+              style:
+                button:
+                  padding-left: 50px
+                  padding-right: 50px
+                  border-radius: 10px
+                  border-width: 1px
+                  border-style: solid
+                icon:
+                  '--mdc-icon-size': 25px
+              state_styles:
+                closed:
+                  button:
+                    border-color: var(--secondary-background-color)
+                    background-color: var(--secondary-background-color)
+                  icon:
+                    color: var(--disabled-text-color)
+                open:
+                  button:
+                    border-color: var(--paper-item-icon-color)
+                  icon:
+                    color: var(--paper-item-icon-color)
+              tap_action:
+                action: call-service
+                service: cover.close_cover
+                service_data:
+                  entity_id: cover.nursery_curtain_left
+            - entity: cover.nursery_curtain_left
+              name: false
+              icon: mdi:curtains
+              style:
+                button:
+                  padding-left: 50px
+                  padding-right: 50px
+                  border-radius: 10px
+                  border-width: 1px
+                  border-style: solid
+                  border-color: >-
+                    {% if state_attr("cover.nursery_curtain_left",
+                    "current_position") < 98  %}
+                      var(--paper-item-icon-color)
+                    {% else%}
+                      var(--secondary-background-color)
+                    {% endif %}
+                  background-color: >-
+                    {% if state_attr("cover.nursery_curtain_left",
+                    "current_position") < 98  %}
+                      var(--background-color)
+                    {% else%}
+                      var(--secondary-background-color)
+                    {% endif %}
+                icon:
+                  '--mdc-icon-size': 25px
+                  color: >-
+                    {% if state_attr("cover.nursery_curtain_left",
+                    "current_position") < 98  %}
+                      var(--paper-item-icon-color)
+                    {% else%}
+                      var(--disabled-text-color)
+                    {% endif %}
+              tap_action:
+                action: call-service
+                service: cover.open_cover
+                service_data:
+                  entity_id: cover.nursery_curtain_left
+        - type: custom:slider-entity-row
+          entity: cover.nursery_curtain_left
+          step: 5
+          full_row: true
+          hide_state: true
+        - type: section
+          label: Right Curtain
+        - type: custom:paper-buttons-row
+          buttons:
+            - entity: cover.nursery_curtain_right
+              name: false
+              icon: mdi:curtains-closed
+              style:
+                button:
+                  padding-left: 50px
+                  padding-right: 50px
+                  border-radius: 10px
+                  border-width: 1px
+                icon:
+                  '--mdc-icon-size': 25px
+              state_styles:
+                closed:
+                  button:
+                    border-style: solid
+                    border-color: var(--secondary-background-color)
+                    background-color: var(--secondary-background-color)
+                  icon:
+                    color: var(--disabled-text-color)
+                open:
+                  button:
+                    border-style: solid
+                    border-color: var(--paper-item-icon-color)
+                  icon:
+                    color: var(--paper-item-icon-color)
+              tap_action:
+                action: call-service
+                service: cover.close_cover
+                service_data:
+                  entity_id: cover.nursery_curtain_right
+            - entity: cover.nursery_curtain_right
+              name: false
+              icon: mdi:curtains
+              style:
+                button:
+                  padding-left: 50px
+                  padding-right: 50px
+                  border-radius: 10px
+                  border-width: 1px
+                  border-style: solid
+                  border-color: >-
+                    {% if state_attr("cover.nursery_curtain_right",
+                    "current_position") < 98  %}
+                      var(--paper-item-icon-color)
+                    {% else%}
+                      var(--secondary-background-color)
+                    {% endif %}
+                  background-color: >-
+                    {% if state_attr("cover.nursery_curtain_right",
+                    "current_position") < 98  %}
+                      var(--background-color)
+                    {% else%}
+                      var(--secondary-background-color)
+                    {% endif %}
+                icon:
+                  '--mdc-icon-size': 25px
+                  color: >-
+                    {% if state_attr("cover.nursery_curtain_right",
+                    "current_position") < 98  %}
+                      var(--paper-item-icon-color)
+                    {% else%}
+                      var(--disabled-text-color)
+                    {% endif %}
+              tap_action:
+                action: call-service
+                service: cover.open_cover
+                service_data:
+                  entity_id: cover.nursery_curtain_right
+        - type: custom:slider-entity-row
+          entity: cover.nursery_curtain_right
+          step: 5
+          full_row: true
+          hide_state: true
+  light.dining_room_lights:
+    title: Dining Room
+    card:
+      type: entities
+      entities:
+        - entity: sensor.dining_room_temperature
+          type: custom:multiple-entity-row
+          name: Temperature
+          show_state: false
+          secondary_info:
+            entity: sensor.dining_room_temperature
+            name: false
+          entities:
+            - entity: light.dining_room_lights
+              icon: mdi:lightbulb-group
+              name: Lights
+              tap_action:
+                haptic: medium
+                action: call-service
+                service: light.toggle
+                service_data:
+                  entity_id: light.dining_room_lights
+  light.kitchen_lights:
+    title: Kitchen
+    card:
+      type: entities
+      entities:
+        - type: custom:multiple-entity-row
+          entity: light.kitchen_lights
+          name: All Lights
+          show_state: false
+          tap_action:
+            action: toggle
+        - type: divider
+        - type: custom:slider-entity-row
+          entity: light.kitchen_track_lights
+          name: Track Lights
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - entity: light.over_sink_light
+          name: Over Sink Light
+          state_color: true
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - type: divider
+        - entity: switch.espresso_machine
+          tap_action:
+            action: toggle
+  light.garage_fluorescents:
+    title: Garage
+    card:
+      type: entities
+      entities:
+        - entity: climate.garage_ecobee_homekit
+          type: custom:multiple-entity-row
+          name: Temperature
+          show_state: false
+          secondary_info:
+            attribute: current_temperature
+            unit: °F
+          entities:
+            - entity: light.garage_fluorescents
+              icon: mdi:lightbulb-group
+              name: Lights
+              tap_action:
+                action: toggle
+        - type: divider
+        - entity: cover.garage_door_1
+        - entity: cover.garage_door_2
+  camera.back_door:
+    title: Cameras
+    card:
+      type: vertical-stack
+      cards:
+        - type: picture-entity
+          entity: camera.back_door
+          camera_view: live
+          show_state: false
+          show_name: false
+        - type: picture-entity
+          entity: camera.front_door
+          camera_view: live
+          show_state: false
+          show_name: false
+        - type: picture-entity
+          entity: camera.side_door
+          camera_view: live
+          show_state: false
+          show_name: false
+        - type: picture-entity
+          entity: camera.garage
+          camera_view: live
+          show_state: false
+          show_name: false
+  sensor.ford_status:
+    title: Ford Explorer
+    card:
+      type: entities
+      entities:
+        - entity: sensor.ford_status
+        - entity: sensor.ford_fuel_level
+          name: Fuel Level
+        - entity: lock.fordpass_doorlock
+          name: Locks
+        - entity: switch.fordpass_ignition_switch
+          name: Ignition
+        - entity: script.start_and_unlock_ford
+          name: Start and Unlock
+  light.bathroom_lights:
+    title: Bathroom
+    card:
+      type: entities
+      entities:
+        - type: custom:multiple-entity-row
+          entity: sensor.bathroom_temperature
+          name: ' '
+          icon: none
+          state_header: Temp
+          entities:
+            - entity: sensor.bathroom_humidity
+              name: Humidity
+        - type: divider
+        - type: custom:slider-entity-row
+          entity: light.bathroom_lights
+          name: Lights
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - entity: fan.bathroom_fan
+          name: Fan
+          state_color: true
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+  light.master_bath_light_group:
+    title: Master Bathroom
+    card:
+      type: entities
+      entities:
+        - type: custom:multiple-entity-row
+          entity: light.master_bath_light_group
+          name: All Lights
+          show_state: false
+          tap_action:
+            action: toggle
+          entities:
+            - entity: sensor.master_bathroom_humidity
+              name: Humidity
+            - entity: sensor.master_bathroom_temperature
+              name: Temp
+        - type: divider
+        - type: custom:slider-entity-row
+          entity: light.master_bathroom_lights
+          name: Lights
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+        - type: conditional
+          conditions:
+            - entity: light.master_bath_fan
+              state_not: unavailable
+          row:
+            type: custom:slider-entity-row
+            entity: light.master_bath_fan
+            name: Fan Light
+            hide_state: true
+            step: 1
+            min: 1
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+        - entity: fan.master_bathroom_fan
+          name: Fan
+          state_color: true
+          tap_action:
+            action: toggle
+          hold_action:
+            action: more-info
+  climate.garage_ecobee_homekit:
+    title: Thermostat
+    card:
+      type: custom:simple-thermostat
+      entity: climate.garage_ecobee_homekit
+      name: Garage
+      icon:
+        heating: mdi:fire
+        idle: mdi:thermostat-box
+      decimals: 0
+      toggle_entity:
+        entity_id: switch.garage_fan_mode
+        name: Fan Override
+      sensors:
+        - entity: sensor.garage_humidity
+          name: Humidity
+      step_size: '1'
+      control:
+        hvac:
+          cool: false
+          heat_cool: false
+          heat:
+            name: 'on'
+      step_layout: column
+      hide:
+        state: true
+  media_player.samsung_tv:
+    title: TV
+    card:
+      type: vertical-stack
+      cards:
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'on'
+          card:
+            type: horizontal-stack
+            cards:
+              - type: custom:paper-buttons-row
+                buttons:
+                  - entity: media_player.samsung_tv
+                    name: false
+                    icon: mdi:power
+                    style:
+                      icon:
+                        '--mdc-icon-size': 50px
+                        color: var(--primary-color)
+                    tap_action:
+                      action: call-service
+                      service: samsungtv_smart.set_art_mode
+                      service_data:
+                        entity_id: media_player.samsung_tv
+                    hold_action:
+                      action: call-service
+                      service: media_player.toggle
+                      service_data:
+                        entity_id: media_player.samsung_tv
+              - type: custom:paper-buttons-row
+                buttons:
+                  - entity: media_player.samsung_tv
+                    name: false
+                    icon: mdi:blank
+                    style:
+                      icon:
+                        '--mdc-icon-size': 20px
+                    tap_action: none
+                    hold_action: none
+              - type: custom:mini-media-player
+                entity: media_player.samsung_tv
+                group: true
+                scale: '1.5'
+                hide:
+                  name: true
+                  icon: true
+                  info: true
+                  power: true
+                  controls: true
+                  volume: true
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'off'
+          card:
+            type: horizontal-stack
+            cards:
+              - type: custom:paper-buttons-row
+                buttons:
+                  - entity: media_player.samsung_tv
+                    name: false
+                    icon: mdi:power
+                    style:
+                      icon:
+                        '--mdc-icon-size': 50px
+                        color: var(--primary-color)
+                    tap_action:
+                      action: call-service
+                      service: media_player.toggle
+                      service_data:
+                        entity_id: media_player.samsung_tv
+                    hold_action:
+                      action: call-service
+                      service: media_player.toggle
+                      service_data:
+                        entity_id: media_player.samsung_tv
+              - type: custom:paper-buttons-row
+                buttons:
+                  - entity: media_player.samsung_tv
+                    name: false
+                    icon: mdi:blank
+                    style:
+                      icon:
+                        '--mdc-icon-size': 20px
+                    tap_action: none
+                    hold_action: none
+              - type: custom:mini-media-player
+                entity: media_player.samsung_tv
+                group: true
+                scale: '1.5'
+                hide:
+                  name: true
+                  icon: true
+                  info: true
+                  power: true
+                  controls: true
+                  volume: true
+        - type: entities
+          entities:
+            - type: custom:paper-buttons-row
+              buttons:
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:play-pause
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.media_play_pause
+                    service_data:
+                      entity_id: media_player.samsung_tv
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:chevron-up
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_UP
+                      entity_id: media_player.samsung_tv
+                  hold_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_UP
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:volume-plus
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.volume_up
+                    service_data:
+                      entity_id: media_player.samsung_tv
+                  hold_action:
+                    action: call-service
+                    service: media_player.volume_up
+                    service_data:
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+            - type: custom:paper-buttons-row
+              buttons:
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:home
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_HOME
+                      entity_id: media_player.samsung_tv
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:chevron-left
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_LEFT
+                      entity_id: media_player.samsung_tv
+                  hold_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_LEFT
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:circle
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_ENTER
+                      entity_id: media_player.samsung_tv
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:chevron-right
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_RIGHT
+                      entity_id: media_player.samsung_tv
+                  hold_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_RIGHT
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:volume-off
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.volume_mute
+                    service_data:
+                      entity_id: media_player.samsung_tv
+                      is_volume_muted: true
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+            - type: custom:paper-buttons-row
+              buttons:
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:keyboard-return
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_RETURN
+                      entity_id: media_player.samsung_tv
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:chevron-down
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_DOWN
+                      entity_id: media_player.samsung_tv
+                  hold_action:
+                    action: call-service
+                    service: media_player.play_media
+                    service_data:
+                      media_content_type: send_key
+                      media_content_id: KEY_DOWN
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:volume-minus
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                      color: var(--primary-color)
+                  tap_action:
+                    action: call-service
+                    service: media_player.volume_down
+                    service_data:
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                  hold_action:
+                    action: call-service
+                    service: media_player.volume_down
+                    service_data:
+                      entity_id: media_player.samsung_tv
+                    repeat: 200
+                - entity: media_player.samsung_tv
+                  name: false
+                  icon: mdi:blank
+                  style:
+                    icon:
+                      '--mdc-icon-size': 50px
+                  tap_action: none
+                  hold_action: none
+  climate.home_ecobee_homekit:
+    title: Home
+    card:
+      type: custom:vertical-stack-in-card
+      cards:
+        - type: custom:simple-thermostat
+          entity: climate.home_ecobee_homekit
+          decimals: 0
+          header:
+            name: Home
+            toggle:
+              name: Fan Override
+              entity: switch.home_fan_mode
+            faults:
+              - entity: switch.home_fan_mode
+            icon:
+              heating: mdi:fire
+              idle: mdi:thermostat-box
+          sensors:
+            - entity: climate.home_ecobee_homekit
+              attribute: current_temperature
+              unit: °F
+              name: Temperature
+            - entity: sensor.bedroom_temperature
+              name: Bedroom
+            - entity: sensor.living_room_temperature
+              name: Living Room
+            - entity: sensor.nursery_temperature
+              name: Nursery
+            - entity: sensor.home_current_humidity
+              name: Humidity
+          control:
+            hvac:
+              heat_cool:
+                name: auto
+          step_size: '1'
+          hide:
+            state: true
+            temperature: true
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              color_type: blank-card
+              styles:
+                card:
+                  - height: 30px
+                  - width: 3px
+            - type: custom:button-card
+              name: Home
+              tap_action:
+                action: call-service
+                service: climate.set_preset_mode
+                service_data:
+                  preset_mode: Home
+                  entity_id: climate.home_ecobee
+              show_icon: false
+              styles:
+                card:
+                  - background-color: var(--secondary-background-color)
+                  - height: 30px
+                  - border-radius: 5%
+                name:
+                  - color: var(--secondary-text-color)
+              show_state: false
+              state:
+                - operator: template
+                  value: >
+                    [[[ return
+                    states['climate.home_ecobee'].attributes.preset_mode ===
+                    'Home' ]]]
+                  styles:
+                    card:
+                      - background-color: '#2b99f9'
+                    name:
+                      - color: var(--text-primary-color)
+            - type: custom:button-card
+              color_type: blank-card
+              styles:
+                card:
+                  - height: 30px
+                  - width: 2px
+            - type: custom:button-card
+              name: Away
+              tap_action:
+                action: call-service
+                service: climate.set_preset_mode
+                service_data:
+                  preset_mode: Away
+                  entity_id: climate.home_ecobee
+              show_icon: false
+              styles:
+                card:
+                  - background-color: var(--secondary-background-color)
+                  - height: 30px
+                  - border-radius: 5%
+                name:
+                  - color: var(--secondary-text-color)
+              show_state: false
+              state:
+                - operator: template
+                  value: >
+                    [[[ return
+                    states['climate.home_ecobee'].attributes.preset_mode ===
+                    'Away' ]]]
+                  styles:
+                    card:
+                      - background-color: '#2b99f9'
+                    name:
+                      - color: var(--text-primary-color)
+            - type: custom:button-card
+              color_type: blank-card
+              styles:
+                card:
+                  - height: 30px
+                  - width: 2px
+            - type: custom:button-card
+              name: Sleep
+              tap_action:
+                action: call-service
+                service: climate.set_preset_mode
+                service_data:
+                  preset_mode: Sleep
+                  entity_id: climate.home_ecobee
+              show_icon: false
+              styles:
+                card:
+                  - background-color: var(--secondary-background-color)
+                  - height: 30px
+                  - border-radius: 5%
+                name:
+                  - color: var(--secondary-text-color)
+              show_state: false
+              state:
+                - operator: template
+                  value: >
+                    [[[ return
+                    states['climate.home_ecobee'].attributes.preset_mode ===
+                    'Sleep' ]]]
+                  styles:
+                    card:
+                      - background-color: '#2b99f9'
+                    name:
+                      - color: var(--text-primary-color)
+            - type: custom:button-card
+              color_type: blank-card
+              styles:
+                card:
+                  - height: 30px
+                  - width: 3px
+        - type: custom:button-card
+          color_type: blank-card
+          styles:
+            card:
+              - height: 2.5px
+  light.master_bedroom_lights:
+    title: Master Bedroom
+    card:
+      type: entities
+      entities:
+        - type: custom:multiple-entity-row
+          entity: light.master_bedroom_lights
+          name: All Lights
+          show_state: false
+          tap_action:
+            action: toggle
+          entities:
+            - entity: script.dim_bedroom_lights
+              name: false
+              icon: mdi:minus
+              tap_action:
+                action: call-service
+                service: script.dim_bedroom_lights
+                haptic: medium
+            - entity: script.brighten_bedroom_lights
+              name: false
+              icon: mdi:plus
+              tap_action:
+                action: call-service
+                service: script.brighten_bedroom_lights
+                haptic: medium
+            - entity: sensor.master_bathroom_temperature
+              icon: mdi:blank
+              name: false
+              tap_action: none
+            - entity: sensor.bedroom_temperature
+              name: Temp
+        - type: divider
+        - type: custom:slider-entity-row
+          entity: light.bedroom_sconces
+          name: Sconces
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.bedroom_sconces
+        - type: custom:slider-entity-row
+          entity: light.bedroom_track_lights
+          name: Track Lights
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.bedroom_track_lights
+        - type: divider
+        - type: buttons
+          entities:
+            - entity: switch.air_purifier
+              name: Air Purifier
+            - entity: switch.sound_machine
+              name: Sound Machine
+        - type: divider
+        - entity: media_player.bedroom_tv
+  light.living_room_lights:
+    title: Living Room
+    card:
+      type: entities
+      entities:
+        - type: custom:multiple-entity-row
+          entity: light.living_room_lights
+          name: All Lights
+          show_state: false
+          tap_action:
+            action: toggle
+          entities:
+            - entity: sensor.living_room_temperature
+              name: Temp
+        - type: divider
+        - type: custom:slider-entity-row
+          entity: light.living_room_sconces
+          name: Sconces
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.living_room_sconces
+          hold_action:
+            action: more-info
+        - type: custom:slider-entity-row
+          entity: light.living_room_drop_lights
+          name: Drop Lights
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.living_room_drop_lights
+          hold_action:
+            action: more-info
+        - type: custom:slider-entity-row
+          entity: light.living_room_wall_lamp
+          name: Wall Lamp
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.living_room_wall_lamp
+          hold_action:
+            action: more-info
+        - type: custom:slider-entity-row
+          entity: light.living_room_lamp
+          name: Lamp
+          hide_state: true
+          step: 1
+          min: 1
+          tap_action:
+            haptic: medium
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.living_room_lamp
+        - type: custom:rgb-light-card
+          entity: light.living_room_lamp
+          justify: center
+          colors:
+            - rgb_color:
+                - 255
+                - 255
+                - 255
+            - rgb_color:
+                - 255
+                - 0
+                - 0
+            - rgb_color:
+                - 0
+                - 255
+                - 0
+            - rgb_color:
+                - 0
+                - 0
+                - 255
+            - rgb_color:
+                - 0
+                - 255
+                - 255
+            - rgb_color:
+                - 255
+                - 0
+                - 255
+            - rgb_color:
+                - 255
+                - 255
+                - 0
+        - type: divider
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'on'
+          row:
+            type: custom:multiple-entity-row
+            entity: media_player.samsung_tv
+            name: Samsung TV
+            state_color: true
+            show_state: false
+            secondary_info:
+              attribute: source
+            entities:
+              - icon: mdi:power
+                tap_action:
+                  action: call-service
+                  service: samsungtv_smart.set_art_mode
+                  service_data:
+                    entity_id: media_player.samsung_tv
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'off'
+          row:
+            type: custom:multiple-entity-row
+            entity: media_player.samsung_tv
+            name: Samsung TV
+            secondary_info:
+              entity: media_player.samsung_tv
+              name: false
+            state_color: true
+            show_state: false
+            entities:
+              - icon: mdi:power
+                tap_action:
+                  action: call-service
+                  service: media_player.turn_on
+                  service_data:
+                    entity_id: media_player.samsung_tv
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'on'
+          row:
+            type: custom:paper-buttons-row
+            buttons:
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:play-pause
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.media_play_pause
+                  service_data:
+                    entity_id: media_player.samsung_tv
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:chevron-up
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_UP
+                    entity_id: media_player.samsung_tv
+                hold_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_UP
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:volume-plus
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.volume_up
+                  service_data:
+                    entity_id: media_player.samsung_tv
+                hold_action:
+                  action: call-service
+                  service: media_player.volume_up
+                  service_data:
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'on'
+          row:
+            type: custom:paper-buttons-row
+            buttons:
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:home
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_HOME
+                    entity_id: media_player.samsung_tv
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:chevron-left
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_LEFT
+                    entity_id: media_player.samsung_tv
+                hold_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_LEFT
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:circle
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_ENTER
+                    entity_id: media_player.samsung_tv
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:chevron-right
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_RIGHT
+                    entity_id: media_player.samsung_tv
+                hold_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_RIGHT
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:volume-off
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.volume_mute
+                  service_data:
+                    entity_id: media_player.samsung_tv
+                    is_volume_muted: true
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+        - type: conditional
+          conditions:
+            - entity: media_player.samsung_tv
+              state: 'on'
+          row:
+            type: custom:paper-buttons-row
+            buttons:
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:keyboard-return
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_RETURN
+                    entity_id: media_player.samsung_tv
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:chevron-down
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_DOWN
+                    entity_id: media_player.samsung_tv
+                hold_action:
+                  action: call-service
+                  service: media_player.play_media
+                  service_data:
+                    media_content_type: send_key
+                    media_content_id: KEY_DOWN
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:volume-minus
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                    color: var(--primary-color)
+                tap_action:
+                  action: call-service
+                  service: media_player.volume_down
+                  service_data:
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+                hold_action:
+                  action: call-service
+                  service: media_player.volume_down
+                  service_data:
+                    entity_id: media_player.samsung_tv
+                  repeat: 200
+              - entity: media_player.samsung_tv
+                name: false
+                icon: mdi:blank
+                style:
+                  icon:
+                    '--mdc-icon-size': 50px
+                tap_action: none
+                hold_action: none
+views:
+  - title: Home
+    layout:
+      max_width: 400
+    type: custom:vertical-layout
+    badges: []
+    cards:
+      - type: grid
+        cards:
+          - type: grid
+            cards:
+              - entity: input_boolean.brandons_home_homekit
+                template: quick_toggle_btn
+                type: custom:button-card
+                tap_action:
+                  action: more-info
+                hold_action:
+                  action: call-service
+                  service: input_boolean.toggle
+                  service_data:
+                    entity_id: input_boolean.show_header
+                double_tap_action:
+                  action: call-service
+                  service: input_boolean.toggle
+                  service_data:
+                    entity_id: input_boolean.show_header
+              - entity: switch.sound_machine
+                template: quick_toggle_btn
+                type: custom:button-card
+              - entity: input_boolean.lauras_home_homekit
+                template: quick_toggle_btn
+                type: custom:button-card
+                tap_action:
+                  action: more-info
+              - entity: binary_sensor.vacuums
+                template: quick_toggle_btn
+                type: custom:button-card
+                tap_action:
+                  action: more-info
+            columns: 2
+          - type: custom:button-card
+            entity: climate.home_ecobee_homekit
+            name: Home
+            icon: |
+              [[[
+                var hvac_action = entity.attributes.hvac_action;
+                if (hvac_action == "heating") return 'mdi:fire';
+                if (hvac_action == "cooling") return 'mdi:snowflake';
+                else return 'mdi:thermostat-box'
+              ]]]
+            label: |
+              [[[
+                var temp = entity.attributes.current_temperature;
+                return '' + (temp ? temp : '0.0') + '°F';
+              ]]]
+            state_display: |
+              [[[
+                var setplo = entity.attributes.target_temp_low;
+                var setphi = entity.attributes.target_temp_high;
+                var setp = entity.attributes.temperature;
+                if (entity.state == "heat") return 'Heating to ' + setp + '°F';
+                if (entity.state == "cool") return 'Cooling to ' + setp + '°F';
+                if (entity.state == "heat_cool") return 'Auto ' + setplo + '°F' + ' & ' + setphi + '°F';
+                else return "Off"
+              ]]]
+            custom_fields:
+              s2: |
+                [[[
+                  var preset = states['climate.home_ecobee'].attributes.preset_mode;
+                  if (preset !== "temp" && entity.state !== "off") return 'Preset: ' + preset;
+                  else return "&nbsp"
+                ]]]
+            state:
+              - id: state_on
+                operator: template
+                value: |
+                  [[[ return entity.state === 'heat' ||
+                      entity.state === 'cool' ||
+                      entity.state === 'heat_cool' ]]]
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      var hvac_action = entity.attributes.hvac_action;
+                      if (hvac_action == "heating") return '#ff8708';
+                      if (hvac_action == "cooling") return '#48b8b2';
+                      if (entity.state == "off") return 'grey';
+                      else return '#4ab848'
+                    ]]]
+            tap_action:
+              action: more-info
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: grid
+            cards:
+              - entity: switch.espresso_machine
+                template: quick_toggle_btn
+                type: custom:button-card
+              - entity: camera.back_door
+                template: quick_toggle_btn
+                type: custom:button-card
+                tap_action:
+                  action: more-info
+              - entity: cover.garage_door_1
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Are you sure you want to actuate garage door 1?
+                  service: cover.toggle
+                  service_data:
+                    entity_id: cover.garage_door_1
+                show_name: false
+                name: test
+                template: quick_toggle_btn
+                type: custom:button-card
+              - entity: cover.garage_door_2
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Are you sure you want to actuate garage door 2?
+                  service: cover.toggle
+                  service_data:
+                    entity_id: cover.garage_door_2
+                show_name: false
+                name: test
+                template: quick_toggle_btn
+                type: custom:button-card
+            columns: 2
+          - type: custom:button-card
+            entity: light.master_bedroom_lights
+            name: Bedroom
+            icon: mdi:bed
+            label: |
+              [[[
+                var temp = states['sensor.bedroom_temperature'].state;
+                return Math.round(temp) + '°F';
+              ]]]
+            custom_fields:
+              s2: '&nbsp'
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: light.master_bath_light_group
+            name: Master Bath
+            icon: |
+              [[[
+                if (states['fan.master_bathroom_fan'].state == "on") return 'mdi:fan';
+                else return 'mdi:paper-roll'
+              ]]]
+            label: |
+              [[[
+                var hum = states['sensor.master_bathroom_humidity'].state;
+                return Math.round(hum) + '%';
+              ]]]
+            custom_fields:
+              s2: '&nbsp'
+            state:
+              - id: state_off
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.master_bathroom_fan'].state == "off" && entity.state == "off" )
+                  ]]]
+              - id: state_on
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.master_bathroom_fan'].state == "off" && entity.state == "on" )
+                  ]]]
+              - id: animated_on
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.master_bathroom_fan'].state == "on" && entity.state == "on" )
+                  ]]]
+              - id: animated_off
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.master_bathroom_fan'].state == "on" && entity.state == "off" )
+                  ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - animated_btn_states
+              - light_btn
+            triggers_update:
+              - sensor.master_bathroom_humidity
+          - type: custom:button-card
+            entity: light.stair_lights
+            name: Stairs
+            icon: mdi:stairs
+            label: '&nbsp'
+            custom_fields:
+              s2: '&nbsp'
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: light.kitchen_lights
+            name: Kitchen
+            icon: |
+              [[[
+                var espresso = states['switch.espresso_machine'].state;
+                if (espresso == "on") return 'mdi:coffee-maker';
+                else return 'mdi:silverware'
+              ]]]
+            label: '&nbsp'
+            custom_fields:
+              s2: |
+                [[[ 
+                  var espresso = states['switch.espresso_machine'].state;
+                  if (espresso == "on") return "Espresso is on";
+                  else return "Espresso is off"
+                ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.living_room_temperature
+          - type: custom:button-card
+            entity: light.bathroom_lights
+            name: Bathroom
+            icon: |
+              [[[
+                if (states['fan.bathroom_fan'].state == "on") return 'mdi:fan';
+                else return 'mdi:shower'
+              ]]]
+            label: |
+              [[[
+                var hum = states['sensor.bathroom_humidity'].state;
+                return Math.round(hum) + '%';
+              ]]]
+            custom_fields:
+              s2: '&nbsp'
+            state:
+              - id: state_off
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.bathroom_fan'].state == "off" && entity.state == "off" )
+                  ]]]
+              - id: state_on
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.bathroom_fan'].state == "off" && entity.state == "on" )
+                  ]]]
+              - id: animated_on
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.bathroom_fan'].state == "on" && entity.state == "on" )
+                  ]]]
+              - id: animated_off
+                operator: template
+                value: |
+                  [[[
+                    return (states['fan.bathroom_fan'].state == "on" && entity.state == "off" )
+                  ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - animated_btn_states
+              - light_btn
+            triggers_update:
+              - sensor.bathroom_humidity
+          - type: custom:button-card
+            entity: light.middle_room_lights
+            name: Middle Room
+            icon: mdi:ceiling-light
+            label: '&nbsp'
+            custom_fields:
+              s2: '&nbsp'
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: light.dining_room_lights
+            name: Dining Room
+            icon: mdi:table-chair
+            label: |
+              [[[
+                var temp = states['sensor.dining_room_temperature'].state;
+                return Math.round(temp) + '°F';
+              ]]]
+            custom_fields:
+              s2: '&nbsp'
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: light.living_room_lights
+            name: Living Room
+            icon: mdi:sofa
+            label: |
+              [[[
+                var temp = states['sensor.living_room_temperature'].state;
+                return Math.round(temp) + '°F';
+              ]]]
+            custom_fields:
+              s2: |
+                [[[ 
+                  var tv = states['media_player.samsung_tv'].state;
+                  var source = states['media_player.samsung_tv'].attributes.source;
+                  if (tv == "on") return source + " is on";
+                  else return "TV is off"
+                ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.living_room_temperature
+          - type: custom:button-card
+            entity: media_player.samsung_tv
+            name: Samsung TV
+            icon: mdi:television
+            label: '&nbsp'
+            state_display: |
+              [[[ 
+                var tv = states['media_player.samsung_tv'].state;
+                var source = states['media_player.samsung_tv'].attributes.source;
+                if (tv == "on") return source + " is on";
+                else return "TV is off"
+              ]]]
+            custom_fields:
+              s2: '&nbsp'
+            show_state: true
+            tap_action:
+              action: more-info
+            double_tap_action:
+              action: call-service
+              service: media_player.media_play_pause
+              service_data:
+                entity_id: media_player.samsung_tv
+            hold_action:
+              action: toggle
+            state:
+              - id: state_off
+                color: var(--paper-item-icon-color)
+              - id: state_on
+                color: '#4ab848'
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+            triggers_update:
+              - sensor.living_room_temperature
+          - type: custom:button-card
+            entity: light.nursery_lights
+            name: Nursery
+            icon: mdi:baby
+            label: |
+              [[[
+                var temp = states['sensor.nursery_temperature'].state;
+                return Math.round(temp) + '°F';
+              ]]]
+            custom_fields:
+              s2: |
+                [[[
+                  var curtain1 = states['cover.nursery_curtain_left'].state;
+                  var curtain2 = states['cover.nursery_curtain_right'].state;
+                  if (curtain1 == "closed" && curtain2 == "closed") return "Curtains Closed";
+                  if (curtain1 !== "closed" && curtain2 == "closed") return "Left curtain " + curtain1;
+                  if (curtain2 !== "closed" && curtain1 == "closed") return "Right curtain " + curtain2;
+                  if (curtain1 !== "closed" && curtain2 !== "closed") return "Curtains " + curtain1;
+                  else return "test2"
+                ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: sensor.ford_status
+            name: Explorer
+            icon: mdi:car-estate
+            label: |
+              [[[ 
+                return states['sensor.ford_status'].state
+              ]]]
+            state_display: |
+              [[[ 
+                var locks = states['lock.fordpass_doorlock'].state;
+                if (locks == "locked") return "Doors Locked";
+                if (locks == "unlocked") return "Doors Unocked";
+              ]]]
+            custom_fields:
+              s2: |
+                [[[
+                  var fuel = states['sensor.ford_fuel_level'].state;
+                  return 'Fuel Level ' + fuel + '%';
+                ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+            triggers_update:
+              - sensor.ford_fuel_level
+            state:
+              - id: state_off
+                value: 'Off'
+                color: var(--paper-item-icon-color)
+              - id: state_on
+                value: Running
+                color: '#4ab848'
+            tap_action:
+              action: more-info
+          - type: custom:button-card
+            entity: climate.garage_ecobee_homekit
+            name: Garage
+            icon: |
+              [[[
+                var hvac_action = entity.attributes.hvac_action;
+                if (hvac_action == "heating") return 'mdi:fire';
+                if (hvac_action == "cooling") return 'mdi:snowflake';
+                else return 'mdi:thermostat-box'
+              ]]]
+            label: |
+              [[[
+                var temp = entity.attributes.current_temperature;
+                return '' + (temp ? temp : '0.0') + '°F';
+              ]]]
+            state_display: |
+              [[[
+                var setplo = entity.attributes.target_temp_low;
+                var setphi = entity.attributes.target_temp_high;
+                var setp = entity.attributes.temperature;
+                if (entity.state == "heat") return 'Heating to ' + setp + '°F';
+                if (entity.state == "cool") return 'Cooling to ' + setp + '°F';
+                if (entity.state == "heat_cool") return 'Auto ' + setplo + '°F' + ' and ' + setphi + '°F';
+                else return "Off"
+              ]]]
+            custom_fields:
+              s2: '&nbsp'
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      var hvac_action = entity.attributes.hvac_action;
+                      if (hvac_action == "heating") return 'orange';
+                      if (hvac_action == "cooling") return 'blue';
+                      if (entity.state == "off") return 'grey';
+                      else return '#4ab848'
+                    ]]]
+            state:
+              - id: state_on
+                operator: template
+                value: |
+                  [[[ return entity.state === 'heat' ||
+                      entity.state === 'cool'
+                      entity.state === 'heat_cool' ]]]
+            tap_action:
+              action: more-info
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: light.garage_fluorescents
+            name: Garage
+            icon: |
+              [[[
+                var garage1 = states['cover.garage_door_1'].state;
+                var garage2 = states['cover.garage_door_2'].state;
+                if (garage1 == "closed" && garage2 == "closed") return "mdi:garage-variant";
+                else return "mdi:garage-open-variant"
+              ]]]
+            label: |
+              [[[
+                var temp = states['climate.garage_ecobee_homekit'].attributes.current_temperature;
+                return Math.round(temp) + '°F';
+              ]]]
+            custom_fields:
+              s2: |
+                [[[
+                  var garage1 = states['cover.garage_door_1'].state;
+                  var garage2 = states['cover.garage_door_2'].state;
+                  if (garage1 == "closed" && garage2 == "closed") return "Doors Closed";
+                  if (garage1 !== "closed" && garage2 == "closed") return "Door 1 " + garage1;
+                  if (garage2 !== "closed" && garage1 == "closed") return "Door 2 " + garage2;
+                  if (garage1 !== "closed" && garage2 !== "closed") return "Doors " + garage1;
+                  else return "test2"
+                ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - climate.garage_ecobee_homekit
+          - type: custom:button-card
+            entity: light.spare_bedroom_lights
+            name: Office
+            icon: mdi:chair-rolling
+            label: '&nbsp'
+            custom_fields:
+              s2: '&nbsp'
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+          - type: custom:button-card
+            entity: light.basement_lights
+            name: Basement
+            label: '&nbsp'
+            icon: mdi:washing-machine
+            custom_fields:
+              s2: |
+                [[[
+                  var washer = states['input_boolean.washer'].state;
+                  var dryer = states['input_boolean.dryer'].state;
+                  if (washer == "off" && dryer == "off") return "&nbsp";
+                  if (washer == "on" && dryer == "off") return "Washer is on";
+                  if (washer == "off" && dryer == "on") return "Dryer is on";
+                  if (washer == "on" && dryer == "on") return "Washer & Dryer on";
+                  else return "test2"
+                ]]]
+            template:
+              - standard_btn_layout
+              - standard_btn_states
+              - standard_btn_states_on
+              - light_btn
+            triggers_update:
+              - sensor.bedroom_temperature
+        square: true

@@ -1,0 +1,11 @@
+brandons_theme:
+  modes:
+    light:
+      primary-color: "#02D1E3"
+      background-image: "center / cover no-repeat fixed url('/local/backgrounds/homekit-bg-light-blue.jpg')"
+      paper-item-icon-color: grey
+    dark:
+      primary-color: "#009EC1"
+      background-image: "center / cover no-repeat fixed url('/local/backgrounds/homekit-bg-light-blue.jpg')"
+      secondary-text-color: slategray
+      paper-item-icon-color: grey
